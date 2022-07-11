@@ -1,5 +1,5 @@
 # Introduction 
-This is a PoC which leverages Azure IoT Central for a smart farm use case. It collects temperature, humidity, and light data from sensors. Then send the data to Azure via Azure IoT Central via wireless network. This scenario is inspired by a discussion with Salmonberry Goods (a Washington based farming startup) who expresses the need for leveraging technology to optimize farming process.
+This is an example code which leverages Azure IoT Central for a smart farm use case. It collects temperature, humidity, and light data from sensors. Then send the data to Azure via Azure IoT Central via wireless network.
 
 ## Hardwares
 
