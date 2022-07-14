@@ -1,6 +1,5 @@
 # Introduction 
-This is an example code which leverages Azure IoT Central for a smart farm use case. It collects temperature, humidity, and light data from sensors. Then send the data to Azure via Azure IoT Central via wireless network.
-
+This is an example code which leverages Azure IoT Central for a smart farm use case. It collects temperature, humidity, and light data from sensors. Then send the data to Azure via Azure IoT Central via wireless network. Most of the code of this project is based on the [ESP32-Azure IoT Kit example](https://github.com/Azure/azure-sdk-for-c-arduino/tree/main/examples/Azure_IoT_Central_ESP32_AzureIoTKit) of Azure SDK for C on Arduino.
 ## Hardwares
 
 Micro-controller
