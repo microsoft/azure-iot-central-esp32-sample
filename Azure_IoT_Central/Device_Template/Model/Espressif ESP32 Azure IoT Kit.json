@@ -1,0 +1,233 @@
+[
+  {
+    "@id": "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit;1",
+    "@type": "Interface",
+    "contents": [
+      {
+        "@type": "Command",
+        "commandType": "synchronous",
+        "displayName": {
+          "en": "Toggle LED 1"
+        },
+        "name": "ToggleLed1"
+      },
+      {
+        "@type": "Command",
+        "commandType": "synchronous",
+        "displayName": {
+          "en": "Toggle LED 2"
+        },
+        "name": "ToggleLed2"
+      },
+      {
+        "@type": "Command",
+        "commandType": "synchronous",
+        "displayName": {
+          "en": "Display Text"
+        },
+        "name": "DisplayText",
+        "request": {
+          "@type": "CommandPayload",
+          "comment": "Text to be printed on the OLED display",
+          "displayName": {
+            "en": "Content"
+          },
+          "name": "content",
+          "schema": "string"
+        }
+      },
+      {
+        "@type": [
+          "Telemetry",
+          "Temperature"
+        ],
+        "displayName": {
+          "en": "Temperature"
+        },
+        "name": "temperature",
+        "schema": "double",
+        "unit": "degreeCelsius"
+      },
+      {
+        "@type": [
+          "Telemetry",
+          "RelativeHumidity"
+        ],
+        "displayName": {
+          "en": "Humidity"
+        },
+        "name": "humidity",
+        "schema": "double",
+        "unit": "percent"
+      },
+      {
+        "@type": [
+          "Telemetry",
+          "Pressure"
+        ],
+        "displayName": {
+          "en": "Pressure"
+        },
+        "name": "pressure",
+        "schema": "double",
+        "unit": "kilopascal"
+      },
+      {
+        "@type": "Component",
+        "description": {
+          "en": "Interface with basic device hardware information."
+        },
+        "displayName": {
+          "en": "Device Information"
+        },
+        "name": "deviceInformation",
+        "schema": "dtmi:azure:DeviceManagement:DeviceInformation;1"
+      },
+      {
+        "@id": "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit:visibleLight;1",
+        "@type": "Telemetry",
+        "displayName": {
+          "en": "Visible Light"
+        },
+        "name": "visibleLight",
+        "schema": "integer"
+      },
+      {
+        "@id": "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit:infraredLight;1",
+        "@type": "Telemetry",
+        "displayName": {
+          "en": "Infrared Light"
+        },
+        "name": "infraredLight",
+        "schema": "integer"
+      },
+      {
+        "@id": "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit:TelemetryFrequencyInSeconds;1",
+        "@type": "Property",
+        "displayName": {
+          "en": "Telemetry Frequency in Seconds"
+        },
+        "name": "TelemetryFrequencyInSeconds",
+        "schema": "integer",
+        "writable": true
+      },
+      {
+        "@id": "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit:uvIndex;1",
+        "@type": "Telemetry",
+        "displayName": {
+          "en": "UV Index"
+        },
+        "name": "uvIndex",
+        "schema": "double"
+      }
+    ],
+    "displayName": {
+      "en": "Espressif ESP32 Azure IoT Kit"
+    },
+    "@context": [
+      "dtmi:iotcentral:context;2",
+      "dtmi:dtdl:context;2"
+    ]
+  },
+  {
+    "@context": [
+      "dtmi:iotcentral:context;2",
+      "dtmi:dtdl:context;2"
+    ],
+    "@id": "dtmi:azure:DeviceManagement:DeviceInformation;1",
+    "@type": "Interface",
+    "contents": [
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Company name of the device manufacturer. This could be the same as the name of the original equipment manufacturer (OEM). Ex. Contoso."
+        },
+        "displayName": {
+          "en": "Manufacturer"
+        },
+        "name": "manufacturer",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Device model name or ID. Ex. Surface Book 2."
+        },
+        "displayName": {
+          "en": "Device model"
+        },
+        "name": "model",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Version of the software on your device. This could be the version of your firmware. Ex. 1.3.45"
+        },
+        "displayName": {
+          "en": "Software version"
+        },
+        "name": "swVersion",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Name of the operating system on the device. Ex. Windows 10 IoT Core."
+        },
+        "displayName": {
+          "en": "Operating system name"
+        },
+        "name": "osName",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Architecture of the processor on the device. Ex. x64 or ARM."
+        },
+        "displayName": {
+          "en": "Processor architecture"
+        },
+        "name": "processorArchitecture",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Name of the manufacturer of the processor on the device. Ex. Intel."
+        },
+        "displayName": {
+          "en": "Processor manufacturer"
+        },
+        "name": "processorManufacturer",
+        "schema": "string"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Total available storage on the device in kilobytes. Ex. 2048000 kilobytes."
+        },
+        "displayName": {
+          "en": "Total storage"
+        },
+        "name": "totalStorage",
+        "schema": "double"
+      },
+      {
+        "@type": "Property",
+        "description": {
+          "en": "Total available memory on the device in kilobytes. Ex. 256000 kilobytes."
+        },
+        "displayName": {
+          "en": "Total memory"
+        },
+        "name": "totalMemory",
+        "schema": "double"
+      }
+    ],
+    "displayName": {
+      "en": "Device Information"
+    }
+  }
+]
