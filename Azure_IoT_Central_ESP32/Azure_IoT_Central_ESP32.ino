@@ -78,9 +78,6 @@
 static const char* wifi_ssid = IOT_CONFIG_WIFI_SSID;
 static const char* wifi_password = IOT_CONFIG_WIFI_PASSWORD;
 
-// TODO: remove this after updating library with Azure SDK for C version 1.3.0-beta.2 or later.
-#define AZURE_SDK_CLIENT_USER_AGENT_WORKAROUND "DeviceClientType=" AZURE_SDK_CLIENT_USER_AGENT
-
 /* --- Function Declarations --- */
 static void sync_device_clock_with_ntp_server();
 static void connect_to_wifi();
@@ -96,7 +93,7 @@ static esp_mqtt_client_handle_t mqtt_client;
 
 static char mqtt_broker_uri[128];
 
-#define AZ_IOT_DATA_BUFFER_SIZE 1000 
+#define AZ_IOT_DATA_BUFFER_SIZE 1500 
 static uint8_t az_iot_data_buffer[AZ_IOT_DATA_BUFFER_SIZE];
 
 #define MQTT_PROTOCOL_PREFIX "mqtts://"
@@ -129,7 +126,15 @@ static int mqtt_client_init_function(mqtt_client_config_t* mqtt_client_config, m
   mqtt_config.port = mqtt_client_config->port;
   mqtt_config.client_id = (const char*)az_span_ptr(mqtt_client_config->client_id);
   mqtt_config.username = (const char*)az_span_ptr(mqtt_client_config->username);
-  mqtt_config.password = (const char*)az_span_ptr(mqtt_client_config->password);
+
+  #ifdef IOT_CONFIG_USE_X509_CERT
+    LogInfo("MQTT client using X509 Certificate authentication");
+    mqtt_config.client_cert_pem = IOT_CONFIG_DEVICE_CERT;
+    mqtt_config.client_key_pem = IOT_CONFIG_DEVICE_CERT_PRIVATE_KEY;
+  #else // Using SAS key
+    mqtt_config.password = (const char*)az_span_ptr(mqtt_client_config->password);
+  #endif
+
   mqtt_config.keepalive = 30;
   mqtt_config.disable_clean_session = 0;
   mqtt_config.disable_auto_reconnect = false;
@@ -328,12 +333,22 @@ void setup()
    * throughout the lifetime of the sample. This variable must also not lose context so other
    * components do not overwrite any information within this structure.
    */
-  azure_iot_config.user_agent = AZ_SPAN_FROM_STR(AZURE_SDK_CLIENT_USER_AGENT_WORKAROUND);
+  azure_iot_config.user_agent = AZ_SPAN_FROM_STR(AZURE_SDK_CLIENT_USER_AGENT);
   azure_iot_config.model_id = azure_pnp_get_model_id();
   azure_iot_config.use_device_provisioning = true; // Required for Azure IoT Central.
   azure_iot_config.iot_hub_fqdn = AZ_SPAN_EMPTY;
   azure_iot_config.device_id = AZ_SPAN_EMPTY;
-  azure_iot_config.device_key = AZ_SPAN_FROM_STR(IOT_CONFIG_DEVICE_KEY);
+
+  #ifdef IOT_CONFIG_USE_X509_CERT
+    azure_iot_config.device_certificate = AZ_SPAN_FROM_STR(IOT_CONFIG_DEVICE_CERT);
+    azure_iot_config.device_certificate_private_key = AZ_SPAN_FROM_STR(IOT_CONFIG_DEVICE_CERT_PRIVATE_KEY);
+    azure_iot_config.device_key = AZ_SPAN_EMPTY;
+  #else
+    azure_iot_config.device_certificate = AZ_SPAN_EMPTY;
+    azure_iot_config.device_certificate_private_key = AZ_SPAN_EMPTY;
+    azure_iot_config.device_key = AZ_SPAN_FROM_STR(IOT_CONFIG_DEVICE_KEY);
+  #endif // IOT_CONFIG_USE_X509_CERT
+
   azure_iot_config.dps_id_scope = AZ_SPAN_FROM_STR(DPS_ID_SCOPE);
   azure_iot_config.dps_registration_id = AZ_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID); // Use Device ID for Azure IoT Central.
   azure_iot_config.data_buffer = AZ_SPAN_FROM_BUFFER(az_iot_data_buffer);
@@ -359,8 +374,8 @@ void loop()
 {
   if (WiFi.status() != WL_CONNECTED)
   {
+    azure_iot_stop(&azure_iot);
     connect_to_wifi();
-    azure_iot_start(&azure_iot);
   }
   else
   {
@@ -381,7 +396,9 @@ void loop()
       case azure_iot_error:
         LogError("Azure IoT client is in error state." );
         azure_iot_stop(&azure_iot);
-        WiFi.disconnect();
+        break;
+      case azure_iot_disconnected:
+        azure_iot_start(&azure_iot);
         break;
       default:
         break;

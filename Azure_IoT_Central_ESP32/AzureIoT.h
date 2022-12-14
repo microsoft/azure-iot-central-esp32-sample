@@ -455,6 +455,18 @@ typedef struct azure_iot_config_t_struct
   az_span device_key;
 
   /*
+   * @brief     X509 certificate to be used for authentication.
+   *
+   */
+  az_span device_certificate;
+
+  /*
+   * @brief     X509 certificate private key to be used for authentication.
+   *
+   */
+  az_span device_certificate_private_key;
+
+  /*
    * @brief     The "Registration ID" to authenticate with when connecting to
    *            Azure Device Provisioning service.
    * @remark    This information is only needed when performing device-provisioning (which is used,
@@ -499,7 +511,7 @@ typedef struct azure_iot_config_t_struct
    *              Where:
    *              <MQTT-clientid>  = <device-id> + '\0'
    *              <MQTT-username>  = <iot-hub-fqdn> + '/' + lengthof(<device-id>) + '/' + '?' + <api-version> +
-   *                                 "&dct=" + urlenc(<user-agent>) + "&model-id=" + urlenc(<pnp-model-id>) + '\0'
+   *                                 "&DeviceClientType=" + urlenc(<user-agent>) + "&model-id=" + urlenc(<pnp-model-id>) + '\0'
    *              <api-version>    = "api-version=<YYYY-MM-DD>" 
    *              <MQTT-password>) = "SharedAccessSignature sr=" + <iot-hub-fqdn> + "%2Fdevices%2F" + <device-id> +
    *                                 "&sig=" + urlenc(<sha256-string>) + "&se=" + <expiration-time> + '\0'
@@ -516,7 +528,7 @@ typedef struct azure_iot_config_t_struct
    *              <pnp-model-id>    = "dtmi:azureiot:devkit:freertos:Esp32AzureIotKit;1"
    *              <api-version>     = "api-version=2020-09-30"
    *              <expiration-time> = "1641251566"
-   *              <user-agent>      = "c/1.1.0-beta.1(FreeRTOS)"
+   *              <user-agent>      = "c%2F1.1.0-beta.1(FreeRTOS)"
    *              
    *              sizeof(data_buffer) >= 592 bytes (59 bytes + 2 bytes + 3 bytes + 190 bytes + 338 bytes, respectively)
    */
@@ -775,15 +787,6 @@ int azure_iot_mqtt_client_message_received(azure_iot_t* azure_iot, mqtt_message_
 /*
  * These functions are used internally by the Azure IoT client code and its extensions.
  */
-
-/**
- * @brief Checks whether `span` is equal to AZ_SPAN_EMPTY.
- *
- * @param[in]    span           A span to be verified.
- *
- * @return       boolean        True if `span`'s pointer and size are equal to AZ_SPAN_EMPTY, or false otherwise.
- */
-#define is_az_span_empty(span) az_span_is_content_equal(span, AZ_SPAN_EMPTY)
 
 /**
  * @brief Slices `span` at position `size`, returns the first slice and assigns the second slice to `remainder`.
